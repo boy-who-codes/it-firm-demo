@@ -1,4 +1,4 @@
-# Prashant IT Consultancy Booking System
+# IT Consultancy Booking System
 
 A Flask-based consultancy booking and payment system with PayU integration, designed for Vercel deployment.
 
@@ -79,10 +79,3 @@ The system integrates with PayU Payment Gateway for processing payments of ₹10
 The system includes required legal pages for PayU compliance:
 - Terms & Conditions
 - Refund Policy
-
-## Contact
-
-For any queries, contact:
-PRASHANTSHEKHAR0710@GMAIL.COM
-
-Address: House no 11 ganesh nagar behind Bagbera police station Bagbera Jamshedpur Jharkhand 831002

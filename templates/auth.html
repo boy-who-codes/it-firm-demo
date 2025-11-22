@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+
+{% block title %}Login / Sign Up - Prashant IT Consultancy{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+  <div class="max-w-md mx-auto">
+    <div class="card bg-white p-8">
+      <div class="text-center">
+        <div class="mx-auto h-16 w-16 rounded-full bg-primary-100 flex items-center justify-center">
+          <svg class="h-10 w-10 text-primary-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+          </svg>
+        </div>
+        <h2 class="mt-6 text-3xl font-extrabold text-gray-900">Welcome</h2>
+        <p class="mt-2 text-sm text-gray-600">
+          Sign in to your account or create a new one
+        </p>
+      </div>
+
+      <!-- Login/Signup Toggle -->
+      <div class="mt-8">
+        <div class="flex border-b border-gray-200">
+          <button id="login-tab" class="flex-1 py-2 px-4 text-center font-medium {% if active_tab == 'login' %}text-primary-600 border-primary-500{% else %}text-gray-500 hover:text-gray-700{% endif %}">Login</button>
+          <button id="signup-tab" class="flex-1 py-2 px-4 text-center font-medium {% if active_tab == 'signup' %}text-primary-600 border-primary-500{% else %}text-gray-500 hover:text-gray-700{% endif %}">Sign Up</button>
+        </div>
+      </div>
+
+      <!-- Login Form -->
+      <div id="login-form" class="mt-6 {% if active_tab != 'login' %}hidden{% endif %}">
+        <form class="space-y-6" action="{{ url_for('login') }}" method="POST">
+          <div>
+            <label for="login-email" class="block text-sm font-medium text-gray-700">Email address</label>
+            <div class="mt-1">
+              <input id="login-email" name="email" type="email" autocomplete="email" required class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm">
+            </div>
+          </div>
+
+          <div>
+            <label for="login-password" class="block text-sm font-medium text-gray-700">Password</label>
+            <div class="mt-1">
+              <input id="login-password" name="password" type="password" autocomplete="current-password" required class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm">
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between">
+            <div class="flex items-center">
+              <input id="remember-me" name="remember-me" type="checkbox" class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded">
+              <label for="remember-me" class="ml-2 block text-sm text-gray-900">Remember me</label>
+            </div>
+
+            <div class="text-sm">
+              <a href="#" class="font-medium text-primary-600 hover:text-primary-500">
+                Forgot your password?
+              </a>
+            </div>
+          </div>
+
+          <div>
+            <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+              Sign in
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Signup Form (Hidden by default) -->
+      <div id="signup-form" class="mt-6 {% if active_tab != 'signup' %}hidden{% endif %}">
+        <form class="space-y-6" action="{{ url_for('signup') }}" method="POST">
+          <div>
+            <label for="signup-email" class="block text-sm font-medium text-gray-700">Email address</label>
+            <div class="mt-1">
+              <input id="signup-email" name="email" type="email" autocomplete="email" required class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm">
+            </div>
+          </div>
+
+          <div>
+            <label for="signup-password" class="block text-sm font-medium text-gray-700">Password</label>
+            <div class="mt-1">
+              <input id="signup-password" name="password" type="password" autocomplete="new-password" required class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm">
+            </div>
+          </div>
+
+          <div>
+            <label for="signup-phone" class="block text-sm font-medium text-gray-700">Phone number (optional)</label>
+            <div class="mt-1">
+              <input id="signup-phone" name="phone" type="tel" class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm">
+            </div>
+          </div>
+
+          <div>
+            <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+              Sign up
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Social Login -->
+      <div class="mt-8">
+        <div class="relative">
+          <div class="absolute inset-0 flex items-center">
+            <div class="w-full border-t border-gray-300"></div>
+          </div>
+          <div class="relative flex justify-center text-sm">
+            <span class="px-2 bg-white text-gray-500">
+              Or continue with
+            </span>
+          </div>
+        </div>
+
+        <div class="mt-6 grid grid-cols-2 gap-3">
+          <div>
+            <a href="#" class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+              <i class="fab fa-google text-red-500"></i>
+              <span class="ml-2">Google</span>
+            </a>
+          </div>
+
+          <div>
+            <a href="#" class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+              <i class="fab fa-microsoft text-blue-500"></i>
+              <span class="ml-2">Microsoft</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.getElementById('login-tab').addEventListener('click', function() {
+    document.getElementById('login-tab').classList.add('text-primary-600', 'border-primary-500');
+    document.getElementById('login-tab').classList.remove('text-gray-500', 'hover:text-gray-700');
+    document.getElementById('signup-tab').classList.remove('text-primary-600', 'border-primary-500');
+    document.getElementById('signup-tab').classList.add('text-gray-500', 'hover:text-gray-700');
+    document.getElementById('login-form').classList.remove('hidden');
+    document.getElementById('signup-form').classList.add('hidden');
+  });
+
+  document.getElementById('signup-tab').addEventListener('click', function() {
+    document.getElementById('signup-tab').classList.add('text-primary-600', 'border-primary-500');
+    document.getElementById('signup-tab').classList.remove('text-gray-500', 'hover:text-gray-700');
+    document.getElementById('login-tab').classList.remove('text-primary-600', 'border-primary-500');
+    document.getElementById('login-tab').classList.add('text-gray-500', 'hover:text-gray-700');
+    document.getElementById('signup-form').classList.remove('hidden');
+    document.getElementById('login-form').classList.add('hidden');
+  });
+</script>
+{% endblock %}

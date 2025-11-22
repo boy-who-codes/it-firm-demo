@@ -1,0 +1,187 @@
+{% extends "base.html" %}
+
+{% block title %}Book {{ service.name }} - Prashant IT Consultancy{% endblock %}
+
+{% block content %}
+{% if not session.user_id %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+  <div class="max-w-3xl mx-auto">
+    <div class="card bg-white p-8 text-center">
+      <h1 class="text-2xl font-bold text-gray-900">Please Login to Book</h1>
+      <p class="mt-4 text-gray-600">You need to be logged in to book a consultation.</p>
+      <div class="mt-6">
+        <a href="{{ url_for('login') }}" class="btn btn-primary">Login</a>
+        <a href="{{ url_for('signup') }}" class="btn btn-outline ml-4">Sign Up</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% else %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+  <div class="max-w-3xl mx-auto">
+    <div class="card bg-white p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-2xl font-bold text-gray-900">Book a Consultation</h1>
+          <p class="mt-1 text-gray-600">Select a time slot for your session</p>
+        </div>
+        <div class="text-right">
+          <p class="text-2xl font-bold text-gray-900">₹{{ "{:,}".format(service.price) }}</p>
+          <p class="text-sm text-gray-500">{{ service.duration }} minutes</p>
+        </div>
+      </div>
+
+      <div class="mt-8">
+        <h2 class="text-lg font-semibold text-gray-900">{{ service.name }}</h2>
+        <p class="mt-2 text-gray-600">{{ service.description }}</p>
+      </div>
+
+      <div class="mt-8">
+        <h3 class="text-lg font-semibold text-gray-900">Available Time Slots</h3>
+        <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {% for slot in slots %}
+          <div class="card p-4 {% if slot.is_booked %}slot-booked{% else %}slot-available{% endif %}">
+            <div class="text-center">
+              <p class="font-medium text-gray-900">{{ slot.date }}</p>
+              <p class="mt-1 text-sm text-gray-600">{{ slot.start_time }} - {{ slot.end_time }}</p>
+              {% if slot.is_booked %}
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 mt-2">
+                Booked
+              </span>
+              {% else %}
+              <button data-slot-id="{{ slot.id }}" data-date="{{ slot.date }}" data-time="{{ slot.start_time }} - {{ slot.end_time }}" 
+                      class="mt-2 btn btn-primary w-full text-sm select-slot-btn">
+                Select Slot
+              </button>
+              {% endif %}
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <form id="bookingForm" action="/api/create-order" method="POST" class="mt-8 hidden">
+        <input type="hidden" id="selectedSlotId" name="slot_id">
+        <input type="hidden" name="service_id" value="{{ service.id }}">
+        
+        <div class="border-t border-gray-200 pt-6">
+          <h3 class="text-lg font-semibold text-gray-900">Your Information</h3>
+          
+          <div class="mt-4 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+            <div class="sm:col-span-3">
+              <label for="first_name" class="block text-sm font-medium text-gray-700">First name</label>
+              <div class="mt-1">
+                <input type="text" name="first_name" id="first_name" required
+                       class="shadow-sm focus:ring-primary-500 focus:border-primary-500 block w-full sm:text-sm border-gray-300 rounded-md p-2 border">
+              </div>
+            </div>
+
+            <div class="sm:col-span-3">
+              <label for="last_name" class="block text-sm font-medium text-gray-700">Last name</label>
+              <div class="mt-1">
+                <input type="text" name="last_name" id="last_name" required
+                       class="shadow-sm focus:ring-primary-500 focus:border-primary-500 block w-full sm:text-sm border-gray-300 rounded-md p-2 border">
+              </div>
+            </div>
+
+            <div class="sm:col-span-4">
+              <label for="email" class="block text-sm font-medium text-gray-700">Email address</label>
+              <div class="mt-1">
+                <input type="email" name="email" id="email" required
+                       class="shadow-sm focus:ring-primary-500 focus:border-primary-500 block w-full sm:text-sm border-gray-300 rounded-md p-2 border">
+              </div>
+            </div>
+
+            <div class="sm:col-span-4">
+              <label for="phone" class="block text-sm font-medium text-gray-700">Phone number</label>
+              <div class="mt-1">
+                <input type="tel" name="phone" id="phone" required
+                       class="shadow-sm focus:ring-primary-500 focus:border-primary-500 block w-full sm:text-sm border-gray-300 rounded-md p-2 border">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-6 bg-gray-50 p-4 rounded-lg">
+          <div class="flex justify-between">
+            <div>
+              <p class="text-sm text-gray-600">Selected Slot:</p>
+              <p id="selectedSlotInfo" class="font-medium text-gray-900"></p>
+            </div>
+            <div class="text-right">
+              <p class="text-sm text-gray-600">Total Amount:</p>
+              <p class="text-xl font-bold text-gray-900">₹{{ "{:,}".format(service.price) }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-6 flex justify-end">
+          <button type="submit" class="btn btn-primary">
+            Proceed to Payment
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  function selectSlot(slotId, date, time) {
+    document.getElementById('selectedSlotId').value = slotId;
+    document.getElementById('selectedSlotInfo').textContent = date + ' at ' + time;
+    document.getElementById('bookingForm').classList.remove('hidden');
+    
+    // Scroll to form
+    document.getElementById('bookingForm').scrollIntoView({ behavior: 'smooth' });
+  }
+  
+  // Handle slot selection using event delegation
+  document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('select-slot-btn')) {
+      const slotId = e.target.getAttribute('data-slot-id');
+      const date = e.target.getAttribute('data-date');
+      const time = e.target.getAttribute('data-time');
+      selectSlot(slotId, date, time);
+    }
+  });
+  
+  // Form submission handler
+  document.getElementById('bookingForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    // Show loading state
+    const submitButton = this.querySelector('button[type="submit"]');
+    const originalText = submitButton.textContent;
+    submitButton.textContent = 'Processing...';
+    submitButton.disabled = true;
+    
+    // Send form data to server
+    const formData = new FormData(this);
+    
+    fetch('/api/create-order', {
+      method: 'POST',
+      body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.status === 'success') {
+        // Create a temporary div to hold the payment form and submit it
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = data.payment_form;
+        document.body.appendChild(tempDiv);
+        // The form will auto-submit via JavaScript
+      } else {
+        alert('Error: ' + data.message);
+        submitButton.textContent = originalText;
+        submitButton.disabled = false;
+      }
+    })
+    .catch(error => {
+      alert('Error processing order');
+      submitButton.textContent = originalText;
+      submitButton.disabled = false;
+    });
+  });
+</script>
+{% endif %}
+{% endblock %}

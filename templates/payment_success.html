@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Payment Successful - Prashant IT Consultancy{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+  <div class="max-w-3xl mx-auto">
+    <div class="card bg-white p-8 text-center">
+      <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100">
+        <svg class="h-16 w-16 text-green-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+        </svg>
+      </div>
+      
+      <h1 class="mt-6 text-3xl font-extrabold text-gray-900">Payment Successful!</h1>
+      <p class="mt-4 text-lg text-gray-600">
+        Your consultation booking has been confirmed. A confirmation email with invoice details has been sent to your email address.
+      </p>
+      
+      <div class="mt-8 bg-gray-50 rounded-lg p-6 text-left">
+        <h2 class="text-lg font-semibold text-gray-900">Booking Details</h2>
+        <div class="mt-4 space-y-3">
+          <div class="flex justify-between">
+            <span class="text-gray-600">Service:</span>
+            <span class="font-medium text-gray-900">Business Strategy Consulting</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-gray-600">Date & Time:</span>
+            <span class="font-medium text-gray-900">Dec 15, 2023 at 09:00 - 10:00</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-gray-600">Duration:</span>
+            <span class="font-medium text-gray-900">60 minutes</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-gray-600">Amount Paid:</span>
+            <span class="font-medium text-gray-900">₹50,000</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-gray-600">Transaction ID:</span>
+            <span class="font-medium text-gray-900">#TXN1234567890</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="mt-8 flex flex-col sm:flex-row sm:justify-center gap-4">
+        <a href="{{ url_for('account') }}" class="btn btn-primary">
+          View My Bookings
+        </a>
+        <a href="{{ url_for('services') }}" class="btn btn-outline">
+          Book Another Service
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

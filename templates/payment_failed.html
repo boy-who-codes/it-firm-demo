@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Payment Failed - Prashant IT Consultancy{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+  <div class="max-w-3xl mx-auto">
+    <div class="card bg-white p-8 text-center">
+      <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-100">
+        <svg class="h-16 w-16 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </div>
+      
+      <h1 class="mt-6 text-3xl font-extrabold text-gray-900">Payment Failed</h1>
+      <p class="mt-4 text-lg text-gray-600">
+        Unfortunately, your payment could not be processed. Please try again or contact our support team for assistance.
+      </p>
+      
+      <div class="mt-8 bg-yellow-50 border-l-4 border-yellow-400 p-4 text-left">
+        <div class="flex">
+          <div class="flex-shrink-0">
+            <svg class="h-5 w-5 text-yellow-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+            </svg>
+          </div>
+          <div class="ml-3">
+            <p class="text-sm text-yellow-700">
+              <strong>Note:</strong> Your booking has not been confirmed. No amount has been deducted from your account.
+            </p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="mt-8 flex flex-col sm:flex-row sm:justify-center gap-4">
+        <a href="{{ url_for('book_service', service_id=1) }}" class="btn btn-primary">
+          Try Again
+        </a>
+        <a href="{{ url_for('services') }}" class="btn btn-outline">
+          View All Services
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

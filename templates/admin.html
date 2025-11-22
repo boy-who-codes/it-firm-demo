@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Panel - Prashant IT Consultancy{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+  <div class="md:flex md:items-center md:justify-between">
+    <div class="flex-1 min-w-0">
+      <h1 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">Admin Panel</h1>
+    </div>
+  </div>
+
+  <div class="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
+    <!-- Services Management -->
+    <div class="card bg-white p-6">
+      <h2 class="text-lg font-medium text-gray-900">Manage Services</h2>
+      
+      <div class="mt-4">
+        <button class="btn btn-primary">Add New Service</button>
+      </div>
+      
+      <div class="mt-6">
+        <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
+          <table class="min-w-full divide-y divide-gray-300">
+            <thead class="bg-gray-50">
+              <tr>
+                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">Service</th>
+                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Price</th>
+                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Duration</th>
+                <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
+                  <span class="sr-only">Edit</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200 bg-white">
+              <tr>
+                <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">Business Strategy Consulting</td>
+                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">₹50,000</td>
+                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">60 min</td>
+                <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                  <a href="#" class="text-primary-600 hover:text-primary-900">Edit</a>
+                </td>
+              </tr>
+              <tr>
+                <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">Technology Implementation</td>
+                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">₹75,000</td>
+                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">90 min</td>
+                <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                  <a href="#" class="text-primary-600 hover:text-primary-900">Edit</a>
+                </td>
+              </tr>
+              <tr>
+                <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">Marketing & Branding</td>
+                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">₹40,000</td>
+                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">45 min</td>
+                <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                  <a href="#" class="text-primary-600 hover:text-primary-900">Edit</a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Time Slots Management -->
+    <div class="card bg-white p-6">
+      <h2 class="text-lg font-medium text-gray-900">Manage Time Slots</h2>
+      
+      <div class="mt-4">
+        <button class="btn btn-primary">Add New Time Slot</button>
+      </div>
+      
+      <div class="mt-6">
+        <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
+          <table class="min-w-full divide-y divide-gray-300">
+            <thead class="bg-gray-50">
+              <tr>
+                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">Date</th>
+                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Time</th>
+                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Service</th>
+                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Status</th>
+                <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
+                  <span class="sr-only">Edit</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200 bg-white">
+              <tr>
+                <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">Dec 15, 2023</td>
+                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">09:00 - 10:00</td>
+                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">Business Strategy</td>
+                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                    Available
+                  </span>
+                </td>
+                <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                  <a href="#" class="text-primary-600 hover:text-primary-900">Edit</a>
+                </td>
+              </tr>
+              <tr>
+                <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">Dec 15, 2023</td>
+                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">14:00 - 15:00</td>
+                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">Business Strategy</td>
+                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                    Booked
+                  </span>
+                </td>
+                <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                  <a href="#" class="text-primary-600 hover:text-primary-900">Edit</a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

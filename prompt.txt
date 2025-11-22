@@ -1,0 +1,264 @@
+Nice — here’s a tight, Vercel-optimized rewrite of your original prompt but swapped to **Django** (no extra backend servers). I kept everything minimal, production-focused, PayU-ready, and Vercel deployable (serverless/ASGI). Copy, paste, and use this as the single instruction prompt for the build.
+
+---
+
+# 🔥 FINAL VERDICT PROMPT — Django (Vercel-Optimized)
+
+**Prompt:**
+Build a complete, production-ready consultancy booking and payment system using **Django (latest stable)**, **TailwindCSS**, **vanilla JSX-free Django templates** (rendered server-side), **HTMX** (optional) for real-time slot interactions, and **Supabase (Postgres + Auth)** as the database/auth backend if you prefer a DB-as-a-service. The system must accept **₹100,000+ payments safely via PayU Payment Gateway**, support real-time slot booking, and include an admin panel. The final code must deploy instantly on **Vercel** (using Vercel’s Python serverless/ASGI support) with zero external application servers you need to manage. Keep it simple — minimal features, secure defaults, and production-grade.
+
+---
+
+## TECH STACK (required)
+
+* Flask (Python, server-side rendering) — plain Python (no TS)
+* TailwindCSS (compiled during build)
+* HTMX (optional, for live slot selection without heavy JS)
+*Sqlite 
+PayU Payment Gateway integration (redirect to PayU pay page + secure callback verification via Django route)
+* Deployment target: Vercel (ASGI/Serverless functions)
+
+---
+
+## PROJECT PURPOSE
+
+A **Legitimate_Prashant IT Consultancy Booking Website** where users purchase consultation sessions by:
+
+1. Selecting a service
+2. Picking a time slot (real-time availability)
+3. Paying via **PayU PG**
+4. Receiving confirmation + invoice (email)
+
+Admin manages services, slots, bookings, and payments via Django Admin + lightweight custom admin UI.
+
+Include legal pages required for PayU compliance:
+
+* Terms & Conditions
+* Refund Policy
+
+---
+
+## PAGES (required)
+
+**Public**
+
+* `/` — Minimal landing page (professional, Uber/Stripe-style)
+* `/services` — Services list
+* `/book/<service_id>/` — Booking / slot selection page
+* `/payment/success/` — Success landing
+* `/payment/failed/` — Failure landing
+* `/terms/` — Terms & Conditions
+* `/refund-policy/` — Refund Policy
+
+**Auth**
+
+* `/login/` — Magic link / email login (Supabase or Django Allauth alternative)
+* `/account/` — simple user profile + bookings list
+
+**Admin**
+
+* `/admin/` — Django admin for CRUD (services, timeslots, bookings, payments)
+* Optional minimal custom admin pages: `/admin/services/`, `/admin/slots/`, `/admin/bookings/`, `/admin/payments/`
+
+---
+
+## DATABASE SCHEMA (Django models)
+
+Provide Django models matching:
+
+```py
+class User(AbstractUser):
+    email = models.EmailField(unique=True)
+    phone = models.CharField(max_length=20, blank=True, null=True)
+    # created_at via AbstractUser timestamps
+
+class Service(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
+    name = models.CharField(max_length=255)
+    description = models.TextField()
+    price = models.IntegerField()        # amount in rupees
+    duration = models.IntegerField()     # minutes
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+class TimeSlot(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
+    date = models.DateField()
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+    service = models.ForeignKey(Service, on_delete=models.CASCADE)
+    is_booked = models.BooleanField(default=False)
+
+class Booking(models.Model):
+    STATUS_CHOICES = [('PENDING','PENDING'),('CONFIRMED','CONFIRMED'),('CANCELLED','CANCELLED')]
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    service = models.ForeignKey(Service, on_delete=models.CASCADE)
+    slot = models.ForeignKey(TimeSlot, on_delete=models.CASCADE)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDING')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+class Payment(models.Model):
+    STATUS_CHOICES = [('PENDING','PENDING'),('SUCCESS','SUCCESS'),('FAILED','FAILED')]
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
+    booking = models.ForeignKey(Booking, on_delete=models.CASCADE, related_name='payments')
+    amount = models.IntegerField()
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES)
+    transaction_id = models.CharField(max_length=255, blank=True, null=True)
+    provider = models.CharField(max_length=50, default='PayU')
+    created_at = models.DateTimeField(auto_now_add=True)
+```
+
+---
+
+## PAYU PG INTEGRATION (exact names and flow)
+
+**ENV variable names (use exactly):**
+
+```
+PAYU_MERCHANT_KEY=
+PAYU_MERCHANT_SALT=
+PAYU_BASE_URL="https://sandboxsecure.payu.in/_payment"
+DOMAIN=https://your-domain.com   # set during deployment
+```
+
+**Flow (Django):**
+
+1. POST from booking form → `POST /api/create-order/` (Django view)
+
+   * Creates Booking (PENDING) + Payment record (PENDING) in DB
+   * Builds PayU payload:
+
+     * key (PAYU_MERCHANT_KEY)
+     * txnid (unique txn id)
+     * amount (integer rupees)
+     * productinfo (service.name)
+     * firstname (user.name)
+     * email (user.email)
+     * phone (user.phone)
+     * surl (`{DOMAIN}/payment/success/`)
+     * furl (`{DOMAIN}/payment/failed/`)
+     * service_provider = "payu_paisa"
+   * Compute `hash` using `MD5(key|txnid|amount|productinfo|firstname|email|udf1|udf2|udf3|udf4|udf5||||||salt)` exactly as PayU expects.
+   * Return an HTML form that auto-POSTs (redirect) to `PAYU_BASE_URL` with payload + hash.
+
+2. PayU posts back to `POST /api/payu-callback/` (Django view)
+
+   * Verify incoming hash exactly (reverse check)
+   * Update Payment (status SUCCESS or FAILED) and Booking (CONFIRMED or remain PENDING)
+   * If SUCCESS → mark `TimeSlot.is_booked = True`
+   * Send confirmation email (Django email via SMTP; include invoice PDF attachment optional)
+   * Return HTTP 200 and redirect user to success/failure pages (or the PayU surl/furl will handle front redirect)
+
+**Security:**
+
+* Never store raw merchant salt in logs.
+* Validate IP/rate-limit callback endpoint.
+* Use HTTPS (Vercel provides).
+* Use server-side hash computation only.
+
+---
+
+## REQUIRED API ENDPOINTS (Django URL + view names)
+
+```
+POST /api/create-order/         -> views.create_order
+POST /api/payu-callback/       -> views.payu_callback
+GET  /api/admin/services/       -> admin services list (or Django admin)
+POST /api/admin/services/       -> create service
+PUT  /api/admin/services/<id>/  -> update service
+DELETE /api/admin/services/<id>/
+
+GET  /api/admin/slots/
+POST /api/admin/slots/
+PUT  /api/admin/slots/<id>/
+DELETE /api/admin/slots/<id>/
+
+GET  /api/admin/bookings/
+GET  /api/admin/payments/
+```
+
+All endpoints must return JSON with appropriate HTTP status codes. Use Django REST Framework or simple JsonResponse for minimalism.
+
+---
+
+## FRONTEND REQUIREMENTS
+
+* Minimal, professional styling with TailwindCSS
+* Navbar + Footer (legal links)
+* Service cards with price and duration
+* Calendar / slot picker (HTMX for live availability toggling)
+* Booking form that posts to `/api/create-order/`
+* Payment redirect UX (show loader + transaction summary)
+* Success/Failed pages show booking + payment details
+* Admin layout optional lightweight React-free pages, but Django Admin must be fully functional
+
+---
+
+## LEGAL PAGES CONTENT
+
+**Terms & Conditions** — include:
+
+* Service descriptions & scope
+* Payment terms & timing
+* User responsibilities (honest info, punctuality for booked slots)
+* Refund & cancellation rules
+* Limitation of liability
+* Governing law: specify Indian law / Delhi courts (or configurable)
+
+**Refund Policy** — include:
+
+* When refunds are allowed (e.g., consultant cancellation, double charge)
+* When refunds are not allowed (no-shows, change of mind after delivery)
+* Refund processing timeline (7–14 business days)
+* Contact info for disputes (email + phone)
+
+(Provide full legal text as pages in the repo.)
+
+---
+
+## DEPLOYMENT (Vercel)
+
+* App must be runnable on Vercel using Python ASGI entry (e.g., `asgi.py`) and Vercel Python runtime. Provide `vercel.json` and required build steps:
+
+  * Install Python deps (requirements.txt)
+  * Build Tailwind assets during build (npm install && npm run build)
+  * Run Django collectstatic
+  * Use `uvicorn` as the ASGI adapter within the serverless function, or configure Vercel to run `python manage.py runserver` via their serverless handler pattern. Include exact `vercel.json` config that works.
+* Include instructions for environment variables, migrations (`python manage.py migrate`), superuser creation, and static file handling.
+* Include minimal, tested `Procfile` / `vercel.json` that Vercel accepts for Python + static build.
+
+---
+
+## DELIVERABLES (single output)
+
+1. Complete project folder file tree (root -> apps -> templates -> static -> api -> management)
+2. All Django code (models, views, forms, templates) — JSX not allowed
+3. All URL routing and settings configured for Vercel deployment and Supabase/Postgres
+4. All API route code (`create_order`, `payu_callback`, admin APIs)
+5. Supabase schema SQL + Django `manage.py` migrations instructions (or SQL dump)
+6. PayU PG working integration code with hash generation and callback verification (use env vars above)
+7. Admin panel: Django Admin configured + minimal custom admin views
+8. `.env.example` with required variables (exact names above + DB and EMAIL settings)
+9. README.md with full setup, local dev, Vercel deployment steps, and PayU sandbox testing guide
+10. Terms & Conditions and Refund Policy pages (real, non-placeholder text)
+11. Minimal test cases / instructions to simulate a ₹100,000+ payment in PayU sandbox
+
+---
+
+## RULES (non-negotiable)
+
+* No lorem ipsum; real content only.
+* No placeholders for essential secrets — use `.env.example`.
+* All code must be functional and production-grade (secure hash verification, CSRF protection, input validation, no debug mode in production instructions).
+* No external servers to manage: everything must be deployable on Vercel (serverless/ASGI).
+* Keep features minimal and robust. No unnecessary complexity.
+* Must handle ₹100,000+ payments securely and stably.
+* Include Terms & Refund pages for PayU compliance.
+
+---
+Contact us :- PRASHANT SHEKHAR
+
+PRASHANTSHEKHAR0710@GMAIL.COM
+
+ADDRESS:- House no 11 ganesh nagar behind Bagbera police station Bagbera Jamshedpur Jharkhand 831002

@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Our Services - Prashant IT Consultancy{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+  <div class="text-center">
+    <h1 class="text-3xl font-extrabold text-gray-900 sm:text-4xl">Our Consultancy Services</h1>
+    <p class="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
+      Professional technology solutions tailored to your business needs
+    </p>
+  </div>
+
+  <div class="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+    {% for service in services %}
+    <div class="card bg-white overflow-hidden service-card">
+      <div class="p-6">
+        <div class="flex justify-between items-start">
+          <div>
+            <h3 class="text-xl font-bold text-gray-900">{{ service.name }}</h3>
+            <p class="mt-2 text-gray-600">{{ service.description }}</p>
+          </div>
+        </div>
+        <div class="mt-6 flex items-center justify-between">
+          <div>
+            <p class="text-2xl font-bold text-gray-900">₹{{ "{:,}".format(service.price) }}</p>
+            <p class="text-sm text-gray-500">{{ service.duration }} minutes</p>
+          </div>
+          <a href="{{ url_for('book_service', service_id=service.id) }}" class="btn btn-primary">
+            Book Now
+          </a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
